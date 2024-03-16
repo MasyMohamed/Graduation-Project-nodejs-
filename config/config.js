@@ -6,8 +6,6 @@ module.exports = {
     password: process.env.DB_PASSWORD || "postgres",
     host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT || 5432,
-    ssl: {
-      rejectUnauthorized: false // Only set this if you're encountering certificate validation issues
-    },
+    ssl: true,
   },
 };
