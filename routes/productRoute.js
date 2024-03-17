@@ -1,20 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const productController = require("../controller/productController");
-const { body } = require("express-validator");
+const {
+  getAllProducts,
+  getProduct,
+} = require('../controller/productController');
+const { validateProduct } = require('../utils/validators/productValidator');
 
-router.get("/", productController.getAllProducts);
-router.get("/:productId", productController.getProduct);
-router.post(
-  "/",
-  [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("price").notEmpty().withMessage("Price is required"),
-    body("description").notEmpty().withMessage("Description is required"),
-  ],
-  productController.addProduct
-);
-router.patch("/:productId", productController.updateProduct);
-router.delete("/:productId", productController.deleteProduct);
+router.route('/').get(getAllProducts);
+router.route('/:id').get(validateProduct, getProduct);
 
 module.exports = router;
