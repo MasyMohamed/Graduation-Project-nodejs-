@@ -1,65 +1,29 @@
-//productcontroller.js
-// DataBase
-const { Product } = require("../Models/productModel");
-const { validationResult } = require("express-validator");
-const httpStatus = require("../utils/httpStatusText");
-const AppError = require("../utils/AppError");
+const httpStatus = require('../utils/httpStatusText');
+const AppError = require('../utils/AppError');
+const { PrismaClient } = require('@prisma/client');
+const asyncHandler = require('express-async-handler');
 
-// Async wrapper middleware
-const asyncWrapper = require("../middleware/asynWrapper");
+const prisma = new PrismaClient();
 
-const getAllProducts = async (req, res) => {
-  const query = req.query,
-    limit = query.limit || 10,
-    page = query.page || 1,
-    offset = (page - 1) * limit;
+exports.getAllProducts = asyncHandler(async (req, res) => {
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || 10;
+  const skip = (page - 1) * limit;
 
-  const products = await Product.findAll({ limit, offset });
-  res.json({ status: httpStatus.Success, data: { products } });
-};
+  const products = await prisma.product.findMany({
+    skip,
+    take: limit,
+  });
+  res.status(200).json({ status: httpStatus.Success, page, data: products });
+});
 
-const getProduct = async (req, res, next) => {
-  const product = await Product.findByPk(req.params.productId);
+exports.getProduct = asyncHandler(async (req, res, next) => {
+  const { id } = +req.params;
+  const product = await prisma.product.findFirst({ where: { id } });
+
   if (!product) {
-    return next(new AppError("Product not found", 404, httpStatus.Fail));
-  }
-  res.json({ status: httpStatus.Success, data: { product } });
-};
-
-const addProduct = async (req, res) => {
-  const myErrors = validationResult(req);
-  if (!myErrors.isEmpty()) {
-    return next(new AppError("Validation failed", 400, httpStatus.Fail));
-  }
-  const product = await Product.create(req.body);
-  res.status(201).json({ status: httpStatus.Success, data: { product } });
-};
-
-const updateProduct = async (req, res) => {
-  const productId = +req.params.productId;
-  let product = await Product.findByPk(productId);
-  if (!product) {
-    return next(new AppError("Product not found", 404, httpStatus.Fail));
-  }
-  product = await product.update(req.body);
-  res.json({ status: httpStatus.Success, data: { product } });
-};
-
-const deleteProduct = async (req, res) => {
-  const productId = +req.params.productId;
-  const product = await Product.findByPk(productId);
-  if (!product) {
-    return next(new AppError("Product not found", 404, httpStatus.Fail));
+    return next(new AppError(httpStatus.NotFound, 'Product not found'));
   }
 
-  await product.destroy();
-  res.json({ status: httpStatus.Success, data: null });
-};
-
-module.exports = {
-  getAllProducts: asyncWrapper(getAllProducts),
-  getProduct,
-  addProduct: asyncWrapper(addProduct),
-  updateProduct: asyncWrapper(updateProduct),
-  deleteProduct: asyncWrapper(deleteProduct),
-};
+  res.status(200).json({ status: httpStatus.Success, data: product });
+});
