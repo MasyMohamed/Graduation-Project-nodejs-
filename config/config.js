@@ -13,6 +13,5 @@ module.exports = {
     },
   },
   },
+  
 };
-
-console.log("config", this.database);

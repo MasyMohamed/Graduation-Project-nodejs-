@@ -8,15 +8,14 @@ const sequelize = new Sequelize({
   password: config.database.password,
   host: config.database.host,
   port: config.database.port,
- dialectOptions: {
+  dialectOptions: {
     ssl: {
-      require: true, // Set to true to require SSL/TLS
+      require: tru, // Set to true to require SSL/TLS
       rejectUnauthorized: false, // Set to false if you want to ignore self-signed certificates
     },
   },
 });
 
-console.log("database", sequelize);
 const Product = sequelize.define(
   "Product",
   {
