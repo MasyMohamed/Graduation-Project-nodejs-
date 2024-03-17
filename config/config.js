@@ -7,10 +7,10 @@ module.exports = {
     host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT || 5432,
     dialectOptions: {
-      ssl: {
-        require: true, // Set to true to require SSL/TLS
-        rejectUnauthorized: false, // Set to false if you want to ignore self-signed certificates
-      },
-    },
+    ssl: {
+      require: true, // Set to true to require SSL/TLS
+      rejectUnauthorized: false // Set to false if you want to ignore self-signed certificates
+    }
+  }
   },
 };
