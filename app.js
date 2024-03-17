@@ -4,8 +4,13 @@ const cors = require("cors");
 const httpStatusText = require("./utils/httpStatusText");
 const productRouter = require("./routes/productRoute");
 const AppError = require("./utils/AppError");
-const asyncWrapper = require("./middleware/ValidationSchema");
-const port = 4000;
+const dotenv = require("dotenv");
+
+// Load environment variables from .env file
+dotenv.config();
+
+const port = process.env.PORT || 4000;
+
 app.use(cors());
 app.use(express.json());
 
@@ -25,7 +30,6 @@ app.use((error, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || port; // Change the port number to 4001 or any other available port
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
 });
