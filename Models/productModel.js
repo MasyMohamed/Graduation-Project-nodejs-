@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const config = require("../config/config");
 
 const sequelize = new Sequelize({
-  dialect: "postgres",
+  dialect:"postgres",
   database: config.database.databaseName,
   username: config.database.username,
   password: config.database.password,
@@ -10,8 +10,8 @@ const sequelize = new Sequelize({
   port: config.database.port,
   dialectOptions: {
     ssl: {
-      require: true,
-      rejectUnauthorized: false,
+      require: tru, // Set to true to require SSL/TLS
+      rejectUnauthorized: false, // Set to false if you want to ignore self-signed certificates
     },
   },
 });
@@ -24,6 +24,7 @@ const Product = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    // Model attributes are defined here
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -45,7 +46,7 @@ const Product = sequelize.define(
       type: DataTypes.TEXT,
     },
     skin_type: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, // Corrected typo
     },
     stock_quantity: {
       type: DataTypes.INTEGER,
