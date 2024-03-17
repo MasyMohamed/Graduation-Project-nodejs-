@@ -8,6 +8,7 @@ const sequelize = new Sequelize({
   password: config.database.password,
   host: config.database.host,
   port: config.database.port,
+  ssl:true,
 });
 
 const Product = sequelize.define(
