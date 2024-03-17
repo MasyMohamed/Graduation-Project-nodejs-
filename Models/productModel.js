@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 const config = require("../config/config");
 
 const sequelize = new Sequelize({
-  dialect: "postgres",
+  dialect:"postgres",
   database: config.database.databaseName,
   username: config.database.username,
   password: config.database.password,
@@ -14,7 +14,6 @@ const sequelize = new Sequelize({
       rejectUnauthorized: false, // Set to false if you want to ignore self-signed certificates
     },
   },
-  dialect: "postgres",
 });
 
 const Product = sequelize.define(
