@@ -1,6 +1,6 @@
 //productcontroller.js
 // DataBase
-const { Product } = require("../Models/productModel");
+const { Product } = require("../Models/schema.prisma");
 const { validationResult } = require("express-validator");
 const httpStatus = require("../utils/httpStatusText");
 const AppError = require("../utils/AppError");
