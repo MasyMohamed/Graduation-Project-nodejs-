@@ -4,7 +4,8 @@
   "main": "app.js",
   "scripts": {
     "app": "nodemon app.js",
-    "app:prod": "node app.js"
+    "app:prod": "node app.js",
+    "start": "npx sequelize-cli db:migrate && node app.js"
   },
   "keywords": [],
   "author": "",
