@@ -10,5 +10,5 @@ CREATE TABLE "product" (
     "skin_type" TEXT NOT NULL,
     "stock_quantity" INTEGER NOT NULL,
 
-    CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "product_pkey" PRIMARY KEY ("id")
 );
