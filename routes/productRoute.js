@@ -10,9 +10,10 @@ const {
 const { validateProduct } = require("../utils/validators/productValidator");
 
 router.route("/").get(getAllProducts).post(createProduct);
+
 router
   .route("/:id")
-  .get(validateProduct, getProduct)
+  .get(getProduct)
   .patch(validateProduct, updateProduct)
   .delete(deleteProduct);
 

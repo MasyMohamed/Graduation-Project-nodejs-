@@ -18,100 +18,81 @@ exports.getAllProducts = asyncHandler(async (req, res) => {
 });
 
 exports.getProduct = asyncHandler(async (req, res, next) => {
-  const { id } = +req.params;
-  const product = await prisma.product.findFirst({ where: { id } });
+  const { id } = req.params;
+  const productId = parseInt(id);
+
+  const product = await prisma.product.findUnique({ where: { id: productId } });
 
   if (!product) {
-    return next(new AppError(httpStatus.NotFound, "Product not found"));
+        return next(new AppError("Product not found", 404));
   }
-
   res.status(200).json({ status: httpStatus.Success, data: product });
 });
 
 exports.createProduct = asyncHandler(async (req, res, next) => {
   validatorMiddleware(req, res, async (err) => {
     if (err) {
-      return next(new AppError("Validation failed", 400, httpStatus.Fail));
-    }
+      return next(err); 
+    } else {
+      const existingProduct = await prisma.product.findUnique({
+        where: { id: req.body.id },
+      });
 
-    try {
+      if (existingProduct) {
+        
+        return next(new Error("Product with this ID already exists"));
+      }
+
+      // Create the product with the provided ID
       const product = await prisma.product.create({
-        data: {
-          name: req.body.name,
-          price: req.body.price,
-          brand: req.body.brand,
-          category: req.body.category,
-          product_image_url: req.body.product_image_url,
-          descrption: req.body.descrption,
-          skin_type: req.body.skin_type,
-          stock_quantity: req.body.stock_quantity,
-        },
+        data: req.body,
       });
 
       res.status(201).json({ status: httpStatus.Success, data: { product } });
-    } catch (error) {
-      next(error);
     }
   });
 });
 
-exports.updateProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
 
+exports.updateProduct = asyncHandler(async (req, res, next) => {
   validatorMiddleware(req, res, async (err) => {
     if (err) {
-      return next(new AppError("Validation failed", 400, httpStatus.Fail));
+      return next(err);
     }
 
-    try {
-      const product = await prisma.product.findUnique({
-        where: { id: parseInt(id) },
-      });
+    const productId = parseInt(req.params.id);
+    const updatedProductData = req.body; 
 
-      if (!product) {
-        return next(new AppError(httpStatus.NotFound, "Product not found"));
-      }
+    const product = await prisma.product.update({
+      where: { id: productId },
+      data: updatedProductData,
+    });
 
-      const updatedProduct = await prisma.product.update({
-        where: { id: parseInt(id) },
-        data: {
-          name: req.body.name,
-          price: req.body.price,
-          brand: req.body.brand,
-          category: req.body.category,
-          product_image_url: req.body.product_image_url,
-          description: req.body.description,
-          skin_type: req.body.skin_type,
-          stock_quantity: req.body.stock_quantity,
-        },
-      });
-
-      res
-        .status(200)
-        .json({ status: httpStatus.Success, data: updatedProduct });
-    } catch (error) {
-      next(error);
+    if (!product) {
+      return next(new AppError(404,"Product not found"));
     }
+
+    res.status(200).json({ status: httpStatus.Success, data: product });
   });
 });
 
 exports.deleteProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
+  const productId = parseInt(req.params.id);
 
-  try {
-    const deletedProduct = await prisma.product.delete({
-      where: { id: parseInt(id) },
-    });
+  const productToDelete = await prisma.product.findUnique({
+    where: { id: productId },
+  });
 
-    if (!deletedProduct) {
-      return next(new AppError(httpStatus.NotFound, "Product not found"));
-    }
-
-    res.status(200).json({
-      status: httpStatus.Success,
-      message: "Product deleted successfully",
-    });
-  } catch (error) {
-    next(error);
+  if (!productToDelete) {
+    return next(new AppError("Product not found", 404));
   }
+
+  const deletedProduct = await prisma.product.delete({
+    where: { id: productId },
+  });
+
+  res.status(200).json({
+    status: "Success",
+    message: "Product deleted successfully",
+  });
 });
